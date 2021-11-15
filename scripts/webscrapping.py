@@ -4,52 +4,53 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
 import time
-import urllib
-
-driver = webdriver.Firefox()
-
-
-driver.get("https://play.google.com/")
-select = driver.find_element_by_id('gbqfq')
-select.send_keys("imocci")
-driver.find_element_by_id("gbqfb").click()
-
-l=driver.find_elements_by_class_name("poRVub")
-l[0]
-for i in l:
-    if i.get_attribute('href')[30:34]=='apps':
-        i.click()
-        break
-
-
-r=driver.find_elements_by_xpath("//*[@class='T75of' or @class='sHb2Xb']")
-r=driver.find_elements_by_xpath("//div[contains(@class, 'T75of') and contains(@class, 'sHb2Xb')]")
-
-print(r)
-
-<img src="https://play-lh.googleusercontent.com/fNcZB0MzK9uwBAqkcqeJxblWn6o_R5rTwt4XgbUbt2gFIbGLYnFm7xML0_Y0XgYtlm8=s180" srcset="https://play-lh.googleusercontent.com/fNcZB0MzK9uwBAqkcqeJxblWn6o_R5rTwt4XgbUbt2gFIbGLYnFm7xML0_Y0XgYtlm8=s360 2x" class="T75of sHb2Xb" aria-hidden="true" alt="Cover art" itemprop="image" data-atf="false" data-iml="12152">
-h=r[0].get_attribute('src')
-print(h)
-r[1]
-print(h.get_attribute('src'))
-
+from time import sleep
 import urllib.request
-urllib.request.urlretrieve(h, "captcha.png")
+import pandas as pd
 
 
-<div class="xSyT2c"><img src="https://play-lh.googleusercontent.com/fNcZB0MzK9uwBAqkcqeJxblWn6o_R5rTwt4XgbUbt2gFIbGLYnFm7xML0_Y0XgYtlm8=s180" srcset="https://play-lh.googleusercontent.com/fNcZB0MzK9uwBAqkcqeJxblWn6o_R5rTwt4XgbUbt2gFIbGLYnFm7xML0_Y0XgYtlm8=s360 2x" class="T75of sHb2Xb" aria-hidden="true" alt="Cover art" itemprop="image" data-atf="false" data-iml="12152"></div>
-<img src="https://play-lh.googleusercontent.com/fNcZB0MzK9uwBAqkcqeJxblWn6o_R5rTwt4XgbUbt2gFIbGLYnFm7xML0_Y0XgYtlm8=s180" srcset="https://play-lh.googleusercontent.com/fNcZB0MzK9uwBAqkcqeJxblWn6o_R5rTwt4XgbUbt2gFIbGLYnFm7xML0_Y0XgYtlm8=s360 2x" class="T75of sHb2Xb" aria-hidden="true" alt="Cover art" itemprop="image" data-atf="false" data-iml="11624">
-src = img.get_attribute('src')
+### Read the csv 
+data=pd.read_csv('./data/app_sample.csv')
 
-# download the image
-
-data = urllib.request.urlretrieve
-urllib.request.urlretrieve(src, "captcha.png")
-#l=driver.find_elements_by_class_name("poRVub")
-#for i in l:
-#    print(i.get_attribute('href'))
-
-
-#<div class="WsMG1c nnK0zc" title="Netflix">Netflix</div>
-#<a href="/store/apps/details?id=com.netflix.mediaclient" aria-hidden="true" tabindex="-1" class="poRVub"></a>
-#<a href="/store/apps/details?id=com.netflix.mediaclient" aria-hidden="true" tabindex="-1" class="JC71ub"></a>
+### Function that webscrape images from the google playstore
+### @data: dataframe with the names of the apss
+### @pos_ini: initial position of the list of apps, the webscrap begins in this app
+### @pos_fin: final position of the list of apps, the webscrap ends in this app
+def image_webscrpping(data,pos_ini,pos_fin):
+    # Open firefox navigator
+    driver = webdriver.Firefox()
+    contador=0
+    # Iterates over the list of apps
+    for i in data['App Name'][pos_ini:pos_fin]:
+        # Open the google playstore webpage
+        driver.get("https://play.google.com/")
+        # search for the search field in the webpage
+        select = driver.find_element_by_id('gbqfq')
+        # send the name of the app to the search field
+        select.send_keys(i)
+        # click in search button 
+        driver.find_element_by_id("gbqfb").click()
+        # sleep for 3 seconds
+        sleep(3)
+        # find the first element of the search that belogs to an app 
+        l=driver.find_elements_by_class_name("poRVub")
+        for j in l:
+            if j.get_attribute('href')[30:34]=='apps':
+                j.click()
+                break
+        # sleep for 3 second
+        sleep(3)
+        try:
+            # find the element for the image
+            r=driver.find_elements_by_xpath("//*[@itemprop='image']")
+            # get the attribute image
+            src = r[0].get_attribute('src')
+            #save the image in the path
+            if '/' in i:
+                i=i.split('/')[-1]
+            urllib.request.urlretrieve(src, "./data/images/"+i+".png")
+        except: 
+            a=1
+        contador=contador+1
+        print(contador)
+image_webscrpping(data,347,500)
