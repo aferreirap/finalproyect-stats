@@ -19,6 +19,7 @@ data=pd.read_csv('./data/app_sample.csv')
 def image_webscrpping(data,pos_ini,pos_fin):
     # Open firefox navigator
     driver = webdriver.Firefox()
+    contador=0
     # Iterates over the list of apps
     for i in data['App Name'][pos_ini:pos_fin]:
         # Open the google playstore webpage
@@ -39,10 +40,17 @@ def image_webscrpping(data,pos_ini,pos_fin):
                 break
         # sleep for 3 second
         sleep(3)
-        # find the element for the image
-        r=driver.find_elements_by_xpath("//*[@itemprop='image']")
-        # get the attribute image
-        src = r[0].get_attribute('src')
-        #save the image in the path
-        urllib.request.urlretrieve(src, "./data/images/"+i+".png")
-   
+        try:
+            # find the element for the image
+            r=driver.find_elements_by_xpath("//*[@itemprop='image']")
+            # get the attribute image
+            src = r[0].get_attribute('src')
+            #save the image in the path
+            if '/' in i:
+                i=i.split('/')[-1]
+            urllib.request.urlretrieve(src, "./data/images/"+i+".png")
+        except: 
+            a=1
+        contador=contador+1
+        print(contador)
+image_webscrpping(data,347,500)
