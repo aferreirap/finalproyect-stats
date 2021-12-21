@@ -10,8 +10,9 @@ import pandas as pd
 
 
 ### Read the csv 
-data=pd.read_csv('./data/app_sample.csv')
+data=pd.read_csv('/Users/richardgil/Documents/BGSE/stats/finalproyect-stats/data/missingna.csv')
 
+data['App Name'][200]
 ### Function that webscrape images from the google playstore
 ### @data: dataframe with the names of the apss
 ### @pos_ini: initial position of the list of apps, the webscrap begins in this app
@@ -48,9 +49,10 @@ def image_webscrpping(data,pos_ini,pos_fin):
             #save the image in the path
             if '/' in i:
                 i=i.split('/')[-1]
-            urllib.request.urlretrieve(src, "./data/images/"+i+".png")
+            print(i)
+            urllib.request.urlretrieve(src, "./data/images_2/"+i+".png")
         except: 
             a=1
         contador=contador+1
         print(contador)
-image_webscrpping(data,347,500)
+image_webscrpping(data,0,1)

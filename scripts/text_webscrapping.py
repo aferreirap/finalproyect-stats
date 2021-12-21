@@ -84,7 +84,7 @@ def comments_webscrpping(data,pos_ini,pos_fin,ruta):
             a=1
 
 
-comments_webscrpping(data,4,12,'/Users/richardgil/Documents/BGSE/stats/finalproyect-stats/data/comments')
+comments_webscrpping(data,263,1000,'/Users/richardgil/Documents/BGSE/stats/finalproyect-stats/data/comments')
 
 # FOR TEST
 # pru=pd.read_csv('/Users/richardgil/Documents/BGSE/stats/finalproyect-stats/data/comments'+'/comments.csv')
